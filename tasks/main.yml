@@ -1,0 +1,54 @@
+- name: install pexpect
+  pip:
+    name: pexpect
+  become: true
+
+- name: Make module dir
+  file:
+    path: "{{ epics_base_modules_name }}/soft/stream/{{ epics_stream_module.ver }}"
+    state: directory
+    mode: 0755
+
+- name: MakeBaseApp
+  expect:
+    command: "{{ epics_base_base_name }}/bin/{{ epics_base_epics_host_arch }}/makeBaseApp.pl -t support"
+    chdir: "{{ epics_base_modules_name }}/soft/stream/{{ epics_stream_module.ver }}"
+    responses:
+      Application names?: ""
+
+- name: git clone
+  git:
+    repo: '{{ epics_stream_module.url }}'
+    dest: "{{ epics_base_modules_name }}/soft/stream/{{ epics_stream_module.ver }}/StreamDevice"
+    clone: yes
+    version: "stream_{{ epics_stream_module.ver }}"
+    force: yes
+
+- name: rm GNUmakefile
+  file: 
+    state: absent
+    path: "{{ epics_base_modules_name }}/soft/stream/{{ epics_stream_module.ver }}/StreamDevice/GNUmakefile"
+
+- name: Configure release for stream module
+  include_role: 
+    name: ansible-role-epics-base
+    tasks_from: module_configure_release
+  with_items:
+    - "{{ epics_stream_module }}"
+  loop_control:
+    loop_var: module
+
+- name: Make stream module
+  include_role: 
+    name: ansible-role-epics-base
+    tasks_from: module_make
+  with_items:
+    - "{{ epics_stream_module }}"
+  loop_control:
+    loop_var: module
+
+- name: Make epics module
+  make:
+    chdir: "{{ epics_base_modules_name }}/soft/stream/{{ epics_stream_module.ver }}/StreamDevice"
+  environment:
+    EPICS_HOST_ARCH: "{{ epics_base_epics_host_arch }}"

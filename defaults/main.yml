@@ -1,0 +1,9 @@
+epics_stream_module:
+  name: "stream"
+  type: "soft"
+  ver: "2_7_7"
+  url: "https://github.com/paulscherrerinstitute/StreamDevice"
+  configure_release:
+      - {name: "EPICS_BASE", path: "{{ epics_base_base_name }}", reg: "^(.*)EPICS_BASE(.*)=(.*)$"}
+      - {name: "SNCSEQ", path: "{{ epics_base_modules_name }}/soft/seq/{{ epics_seq_module.ver }}", reg: "^(.*)SNCSEQ(.*)=(.*)$"}
+      - {name: "ASYN", path: "{{ epics_base_modules_name }}/soft/asyn/{{ epics_asyn_module.ver }}", reg: "^(.*)ASYN(.*)=(.*)$"}

@@ -1,0 +1,7 @@
+dependencies:
+  - src: https://github.com/sasaki77/ansible-role-epics-base
+    name: ansible-role-epics-base
+  - src: https://github.com/sasaki77/ansible-role-epics-seq
+    name: ansible-role-epics-seq
+  - src: https://github.com/sasaki77/ansible-role-epics-asyn
+    name: ansible-role-epics-asyn
